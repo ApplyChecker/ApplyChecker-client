@@ -1,0 +1,71 @@
+body {
+  width: 300px;
+  height: 350px;
+}
+
+.popup-container {
+  width: 300px;
+  padding: 12px;
+}
+
+.fetch-button {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  background: #36f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:disabled {
+    background: #ccc;
+  }
+}
+
+.application-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+
+  .company-logo {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-right: 8px;
+  }
+
+  .info {
+    flex: 1;
+
+    .company-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .position {
+      font-size: 12px;
+      color: #666;
+    }
+  }
+
+  .status {
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: 4px;
+
+    &.complete {
+      background: #e6f3ff;
+      color: #36f;
+    }
+    &.reject {
+      background: #ffe6e6;
+      color: #f66;
+    }
+    &.pass {
+      background: #e6ffe6;
+      color: #6c6;
+    }
+  }
+}
