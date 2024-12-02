@@ -1,0 +1,110 @@
+@import "../../styles/variables.scss";
+
+.sync-buttons {
+  &__all {
+    width: 100%;
+    padding: map-get($spacing, md);
+    background: map-get($colors, primary);
+    color: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: map-get($spacing, sm);
+
+    &:hover:not(:disabled) {
+      background: darken(map-get($colors, primary), 5%);
+    }
+
+    &:disabled {
+      background: map-get($colors, gray-400);
+      cursor: not-allowed;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: map-get($spacing, sm);
+    margin-top: map-get($spacing, sm);
+  }
+
+  &__platform {
+    padding: map-get($spacing, md);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: map-get($spacing, sm);
+
+    &--wanted {
+      background: map-get($colors, primary-light);
+      color: map-get($colors, primary);
+
+      &:hover:not(:disabled) {
+        background: darken(map-get($colors, primary-light), 5%);
+      }
+    }
+
+    &--saramin {
+      background: map-get(map-get($colors, status), success-light);
+      color: map-get(map-get($colors, status), success);
+
+      &:hover:not(:disabled) {
+        background: darken(
+          map-get(map-get($colors, status), success-light),
+          5%
+        );
+      }
+    }
+
+    &:disabled {
+      background: map-get($colors, gray-50);
+      color: map-get($colors, gray-400);
+      cursor: not-allowed;
+    }
+  }
+
+  &__icon {
+    width: 16px;
+    height: 16px;
+
+    &.animate-spin {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__status {
+    margin-top: map-get($spacing, sm);
+    padding: map-get($spacing, md);
+    background: map-get($colors, gray-50);
+    border-radius: 8px;
+  }
+
+  &__status-message {
+    font-size: 14px;
+    color: map-get($colors, gray-600);
+    display: flex;
+    align-items: center;
+    gap: map-get($spacing, sm);
+    margin-bottom: map-get($spacing, sm);
+  }
+
+  &__error {
+    margin-top: map-get($spacing, sm);
+  }
+
+  &__progress {
+    width: 100%;
+    margin-top: map-get($spacing, sm);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
