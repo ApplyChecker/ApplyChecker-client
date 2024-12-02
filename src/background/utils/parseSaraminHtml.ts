@@ -1,4 +1,4 @@
-import type { CommonApplication } from "../types";
+import type { CommonApplication } from "../../popup/types";
 import * as cheerio from "cheerio";
 
 const parseSaraminHtml = (html: string): CommonApplication[] => {
@@ -6,12 +6,9 @@ const parseSaraminHtml = (html: string): CommonApplication[] => {
   const applications: CommonApplication[] = [];
 
   $(".row._apply_list").each((index, element) => {
-    console.log("현재 순회중인 Element", element);
     const dataset = element.attribs;
     const txtStatus = $(element).find(".txt_status").text().trim();
     const txtSub = $(element).find(".txt_sub").text().trim();
-
-    console.log("dataset", dataset);
 
     if (
       !dataset["data-company_nm"] ||
@@ -21,10 +18,6 @@ const parseSaraminHtml = (html: string): CommonApplication[] => {
       console.warn("Required data is missing:", dataset);
       return;
     }
-    console.log(
-      "appliedDate",
-      $(element).find(".col_date").text().trim() || new Date().toISOString(),
-    );
 
     const application: CommonApplication = {
       companyName: dataset["data-company_nm"] || "회사 정보 없음",
@@ -52,12 +45,10 @@ const parseSaraminHtml = (html: string): CommonApplication[] => {
         url: `https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=${dataset["data-rec_idx"]}`,
       },
     };
-    console.log("단일 아이템", application);
 
     applications.push(application);
   });
 
-  console.log("parseSaraminHtml 호출결과", applications);
   return applications;
 };
 
