@@ -3,11 +3,19 @@ import type { APIError } from "../../types/application";
 import Progress from "../Progress/Progress";
 import "./SyncButtons.scss";
 import LoginError from "../LoginError/LoginError";
+import { useState } from "react";
 
 interface SyncState {
   isLoading: boolean;
   error: APIError | null;
   progress: number;
+  lastSyncDate?: string;
+}
+
+interface PlatformInfo {
+  id: "wanted" | "saramin";
+  name: string;
+  state: SyncState;
 }
 
 interface SyncButtonsProps {
@@ -19,110 +27,128 @@ interface SyncButtonsProps {
 }
 
 const SyncButtons = ({ platforms, onSync }: SyncButtonsProps) => {
-  const isAnySyncing =
-    platforms.wanted.isLoading || platforms.saramin.isLoading;
+  const [selectedPlatforms, setSelectedPlatforms] = useState<
+    ("wanted" | "saramin")[]
+  >([]);
+
+  const platformList: PlatformInfo[] = [
+    { id: "wanted", name: "원티드", state: platforms.wanted },
+    { id: "saramin", name: "사람인", state: platforms.saramin },
+  ];
+
+  const isAnySyncing = platformList.some(
+    (platform) => platform.state.isLoading,
+  );
 
   const handleRedirect = (url: string) => {
     chrome.tabs.create({ url, active: true });
   };
 
   const currentProgress = () => {
-    if (platforms.wanted.isLoading) return platforms.wanted.progress;
-    if (platforms.saramin.isLoading) return platforms.saramin.progress;
-    return 0;
+    const syncingPlatform = platformList.find(
+      (platform) => platform.state.isLoading,
+    );
+    return syncingPlatform?.state.progress ?? 0;
   };
 
-  const getCurrentSyncingPlatform = () => {
-    if (platforms.wanted.isLoading) return "wanted";
-    if (platforms.saramin.isLoading) return "saramin";
-    return null;
+  const handlePlatformSelect = (platformId: "wanted" | "saramin") => {
+    setSelectedPlatforms((prev) =>
+      prev.includes(platformId)
+        ? prev.filter((p) => p !== platformId)
+        : [...prev, platformId],
+    );
   };
 
-  const isButtonDisabled = (buttonPlatform?: "wanted" | "saramin") => {
-    const currentPlatform = getCurrentSyncingPlatform();
+  const formatLastSync = (date?: string) => {
+    if (!date) return "동기화 이력 없음";
 
-    if (!buttonPlatform) {
-      return isAnySyncing;
+    const updateDate = new Date(date);
+    const month = String(updateDate.getMonth() + 1).padStart(2, "0");
+    const day = String(updateDate.getDate()).padStart(2, "0");
+    const hours = String(updateDate.getHours()).padStart(2, "0");
+    const minutes = String(updateDate.getMinutes()).padStart(2, "0");
+
+    return `최근 업데이트: ${month}.${day} ${hours}:${minutes}`;
+  };
+
+  const handleSync = () => {
+    if (selectedPlatforms.length === 0) return;
+    if (selectedPlatforms.length === platformList.length) {
+      void onSync();
+    } else {
+      void onSync(selectedPlatforms[0]);
     }
-    return currentPlatform !== null && currentPlatform !== buttonPlatform;
   };
 
   return (
-    <div className="sync-buttons">
-      <button
-        className="sync-buttons__all"
-        onClick={() => {
-          void onSync();
-        }}
-        disabled={isButtonDisabled()}
-      >
-        {isAnySyncing ? (
-          <Loader className="sync-buttons__icon animate-spin" />
-        ) : (
-          <RefreshCw className="sync-buttons__icon" />
-        )}
-        전체 플랫폼 동기화
-      </button>
+    <div className="platform-select">
+      <h2 className="platform-select__title">동기화할 플랫폼 선택</h2>
 
-      <div className="sync-buttons__grid">
-        <button
-          className="sync-buttons__platform sync-buttons__platform--wanted"
-          onClick={() => {
-            void onSync("wanted");
-          }}
-          disabled={isButtonDisabled("wanted")}
-        >
-          {platforms.wanted.isLoading ? (
-            <Loader className="sync-buttons__icon animate-spin" />
-          ) : (
-            <RefreshCw className="sync-buttons__icon" />
-          )}
-          원티드
-        </button>
-
-        <button
-          className="sync-buttons__platform sync-buttons__platform--saramin"
-          onClick={() => {
-            void onSync("saramin");
-          }}
-          disabled={isButtonDisabled("saramin")}
-        >
-          {platforms.saramin.isLoading ? (
-            <Loader className="sync-buttons__icon animate-spin" />
-          ) : (
-            <RefreshCw className="sync-buttons__icon" />
-          )}
-          사람인
-        </button>
+      <div className="platform-select__list">
+        {platformList.map((platform: PlatformInfo) => (
+          <label key={platform.id} className="platform-select__item">
+            <div className="platform-select__content">
+              <div className="platform-select__main">
+                <input
+                  type="checkbox"
+                  className={`platform-select__checkbox platform-select__checkbox--${platform.id}`}
+                  checked={selectedPlatforms.includes(platform.id)}
+                  onChange={() => {
+                    handlePlatformSelect(platform.id);
+                  }}
+                  disabled={isAnySyncing}
+                />
+                <span className="platform-select__label">{platform.name}</span>
+              </div>
+              <div className="platform-select__info">
+                <span className="platform-select__date">
+                  {formatLastSync(platform.state.lastSyncDate)}
+                </span>
+                {platform.state.isLoading && (
+                  <Loader className="platform-select__icon animate-spin" />
+                )}
+              </div>
+            </div>
+          </label>
+        ))}
       </div>
 
-      {(isAnySyncing || platforms.wanted.error || platforms.saramin.error) && (
-        <div className="sync-buttons__status">
+      <button
+        className="platform-select__sync-button"
+        onClick={handleSync}
+        disabled={selectedPlatforms.length === 0 || isAnySyncing}
+      >
+        {isAnySyncing ? (
+          <Loader className="platform-select__icon animate-spin" />
+        ) : (
+          <RefreshCw className="platform-select__icon" />
+        )}
+        선택한 플랫폼 동기화
+      </button>
+
+      {(isAnySyncing || Object.values(platforms).some((p) => p.error)) && (
+        <div className="platform-select__status">
           {isAnySyncing && (
             <>
-              <div className="sync-buttons__status-message">
-                <Loader className="sync-buttons__icon animate-spin" />
+              <div className="platform-select__status-message">
+                <Loader className="platform-select__icon animate-spin" />
                 데이터 동기화 중... {currentProgress()}%
               </div>
               <Progress
                 value={currentProgress()}
-                className="sync-buttons__progress"
+                className="platform-select__progress"
               />
             </>
           )}
-          {(platforms.wanted.error || platforms.saramin.error) && (
-            <div className="sync-buttons__error">
-              {Object.entries(platforms).map(
-                ([platform, state]) =>
-                  state.error && (
-                    <LoginError
-                      key={platform}
-                      error={state.error}
-                      onRedirect={handleRedirect}
-                    />
-                  ),
-              )}
-            </div>
+          {Object.entries(platforms).map(
+            ([platform, state]) =>
+              state.error && (
+                <LoginError
+                  key={platform}
+                  error={state.error}
+                  onRedirect={handleRedirect}
+                />
+              ),
           )}
         </div>
       )}

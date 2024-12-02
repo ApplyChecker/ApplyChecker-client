@@ -1,16 +1,22 @@
 @import "../../styles/variables.scss";
 
-.sync-buttons {
-  &__all {
+.platform-select {
+  background: #f8f9fa;
+  border-radius: 16px;
+  padding: map-get($spacing, lg);
+
+  &__sync-button {
     width: 100%;
     padding: map-get($spacing, md);
     background: map-get($colors, primary);
     color: white;
     border-radius: 8px;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: map-get($spacing, sm);
+    margin-top: 14px;
 
     &:hover:not(:disabled) {
       background: darken(map-get($colors, primary), 5%);
@@ -22,47 +28,105 @@
     }
   }
 
-  &__grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: map-get($spacing, sm);
-    margin-top: map-get($spacing, sm);
+  &__title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: map-get($spacing, sm);
+    margin-top: 0;
   }
 
-  &__platform {
-    padding: map-get($spacing, md);
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  &__item {
+    background: white;
     border-radius: 8px;
+    padding: map-get($spacing, sm);
+    cursor: pointer;
+    border: 1px solid #e9ecef;
+
+    &:hover:not(:has(:disabled)) {
+      background: #f8f9fa;
+    }
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__main {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: map-get($spacing, sm);
+    gap: 12px;
+    font-weight: 500;
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+    appearance: none;
+    cursor: pointer;
+    position: relative;
 
     &--wanted {
-      background: map-get($colors, primary-light);
-      color: map-get($colors, primary);
+      background-color: #e7f5ff;
+      border-color: #3f9ff0;
 
-      &:hover:not(:disabled) {
-        background: darken(map-get($colors, primary-light), 5%);
+      &:checked {
+        background-color: #4263eb;
+        border-color: #4263eb;
       }
     }
 
     &--saramin {
-      background: map-get(map-get($colors, status), success-light);
-      color: map-get(map-get($colors, status), success);
+      background-color: #ffffff;
+      border-color: #15b886;
 
-      &:hover:not(:disabled) {
-        background: darken(
-          map-get(map-get($colors, status), success-light),
-          5%
-        );
+      &:checked {
+        background-color: #12b886;
+        border-color: #12b886;
+      }
+    }
+
+    &:checked {
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 3px;
+        width: 6px;
+        height: 12px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
       }
     }
 
     &:disabled {
-      background: map-get($colors, gray-50);
-      color: map-get($colors, gray-400);
+      background-color: #f1f3f5;
+      border-color: #dee2e6;
       cursor: not-allowed;
     }
+  }
+
+  &__label {
+    font-size: 14px;
+    color: #495057;
+    flex-grow: 1;
   }
 
   &__icon {
@@ -75,28 +139,32 @@
   }
 
   &__status {
-    margin-top: map-get($spacing, sm);
-    padding: map-get($spacing, md);
-    background: map-get($colors, gray-50);
+    margin-top: 16px;
+    padding: 12px;
+    background: #f1f3f5;
     border-radius: 8px;
   }
 
   &__status-message {
     font-size: 14px;
-    color: map-get($colors, gray-600);
+    color: #495057;
     display: flex;
     align-items: center;
-    gap: map-get($spacing, sm);
-    margin-bottom: map-get($spacing, sm);
-  }
-
-  &__error {
-    margin-top: map-get($spacing, sm);
+    gap: 8px;
+    margin-bottom: 8px;
+    margin-right: 0;
   }
 
   &__progress {
     width: 100%;
-    margin-top: map-get($spacing, sm);
+    margin-left: 0;
+    margin-top: 8px;
+  }
+
+  &__date {
+    font-size: 12px;
+    color: #868e96;
+    white-space: nowrap;
   }
 }
 
