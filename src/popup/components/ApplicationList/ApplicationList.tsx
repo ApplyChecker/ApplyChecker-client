@@ -12,32 +12,80 @@ const ApplicationList = ({ applications }: ApplicationListProps) => {
   const [showAll, setShowAll] = useState(false);
   const displayedApps = isExpanded ? applications : applications.slice(0, 10);
 
-  const getStatusColor = (status: string) => {
+  const getStatusText = (status: string, platform: string) => {
+    if (platform === "wanted") {
+      switch (status) {
+        case "complete":
+          return "지원완료";
+        case "reject":
+          return "불합격";
+        default:
+          return status;
+      }
+    }
+    return status;
+  };
+
+  const getStatusClassName = (status: string, platform: string) => {
+    if (platform === "wanted") {
+      switch (status) {
+        case "complete":
+          return "status--pending";
+        case "reject":
+          return "status--fail";
+        default:
+          return "status--default";
+      }
+    }
     switch (status) {
       case "서류통과":
         return "status--pass";
       case "불합격":
         return "status--fail";
+      case "최종합격":
+        return "status--success";
       default:
-        return "status--pending";
+        return "status--default";
+    }
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (dateStr.includes(":")) {
+      const [datePart] = dateStr.split(" ");
+      const [, month, day] = datePart.split(".");
+
+      return `${month}.${day}`;
+    } else {
+      const parts = dateStr
+        .split(".")
+        .map((part) => part.trim())
+        .filter(Boolean);
+
+      return `${parts[1]}.${parts[2]}`;
     }
   };
 
   return (
-    <div className="applications">
+    <div className="application-list">
       <button
-        className="applications__trigger"
+        className="application-list__header"
         onClick={() => {
           setIsExpanded(!isExpanded);
         }}
       >
-        <span>
+        <span className="application-list__title">
           최근 지원 내역 (
-          {isExpanded ? applications.length : Math.min(10, applications.length)}
+          {isExpanded
+            ? showAll
+              ? applications.length
+              : 10
+            : applications.length}
           건)
         </span>
         <svg
-          className={`applications__icon ${isExpanded ? "rotate-90" : ""}`}
+          className={`application-list__arrow ${
+            isExpanded ? "is-expanded" : ""
+          }`}
           width="16"
           height="16"
           viewBox="0 0 24 24"
@@ -48,65 +96,54 @@ const ApplicationList = ({ applications }: ApplicationListProps) => {
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
-
       {isExpanded && (
-        <div className="applications__container">
-          <div className="applications__list">
-            {displayedApps.map((app) => (
-              <div key={app.application.id} className="application-card">
-                <div className="application-card__main">
-                  <div className="application-card__title">
-                    <div className="application-card__primary">
-                      <span className="application-card__company">
-                        {app.companyName}
-                      </span>
-                      <svg
-                        width="4"
-                        height="4"
-                        className="application-card__dot"
-                      >
-                        <circle cx="2" cy="2" r="2" fill="currentColor" />
-                      </svg>
-                      <span
-                        className="application-card__position"
-                        title={app.position}
-                      >
-                        {app.position}
-                      </span>
-                    </div>
-                    <div className="application-card__status">
-                      <svg
-                        width="4"
-                        height="4"
-                        className={getStatusColor(app.status.main)}
-                      >
-                        <circle cx="2" cy="2" r="2" fill="currentColor" />
-                      </svg>
-                      <span>{app.status.main}</span>
-                    </div>
+        <div className="application-list__content">
+          <div className="application-list__table">
+            <div className="application-list__table-header">
+              <div className="header__item">회사명</div>
+              <div className="header__item">직무</div>
+              <div className="header__item">지원일</div>
+              <div className="header__item">사이트</div>
+              <div className="header__item">상태</div>
+            </div>
+            <div className="application-list__items">
+              {displayedApps.map((app) => (
+                <div key={app.application.id} className="application-item">
+                  <div className="application-item__company">
+                    {app.companyName}
+                  </div>
+                  <div className="application-item__position">
+                    {app.position}
+                  </div>
+                  <div className="application-item__date">
+                    {formatDate(app.appliedDate)}
+                  </div>
+                  <div
+                    className={`application-item__platform platform--${app.meta.platform}`}
+                  >
+                    {app.meta.platform === "wanted" ? "원티드" : "사람인"}
+                  </div>
+                  <div
+                    className={`application-item__status ${getStatusClassName(
+                      app.status.main,
+                      app.meta.platform,
+                    )}`}
+                  >
+                    {getStatusText(app.status.main, app.meta.platform)}
                   </div>
                 </div>
-                <div className="application-card__sub">
-                  <span>{app.appliedDate.split(" ")[0]}</span>
-                  <svg width="2" height="2" className="application-card__dot">
-                    <circle cx="1" cy="1" r="1" fill="currentColor" />
-                  </svg>
-                  <span className={`platform platform--${app.meta.platform}`}>
-                    {app.meta.platform === "wanted" ? "원티드" : "사람인"}
-                  </span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
-          {applications.length > 10 && !showAll && (
+          {isExpanded && !showAll && applications.length > 10 && (
             <button
-              className="applications__show-more"
+              className="application-list__show-more"
               onClick={() => {
                 setShowAll(true);
               }}
             >
-              지원내역 모두보기 ({applications.length}건)
+              전체 지원내역 보기 ({applications.length}건)
             </button>
           )}
         </div>
@@ -114,4 +151,5 @@ const ApplicationList = ({ applications }: ApplicationListProps) => {
     </div>
   );
 };
+
 export default ApplicationList;
