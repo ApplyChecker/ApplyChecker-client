@@ -1,58 +1,63 @@
 import type { CommonApplication } from "../types";
+import * as cheerio from "cheerio";
 
 const parseSaraminHtml = (html: string): CommonApplication[] => {
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, "text/html");
+  const $ = cheerio.load(html);
   const applications: CommonApplication[] = [];
 
-  const applicationRows = doc.querySelectorAll(".row._apply_list");
+  $(".row._apply_list").each((index, element) => {
+    console.log("현재 순회중인 Element", element);
+    const dataset = element.attribs;
+    const txtStatus = $(element).find(".txt_status").text().trim();
+    const txtSub = $(element).find(".txt_sub").text().trim();
 
-  applicationRows.forEach((row) => {
-    const dataset = (row as HTMLElement).dataset;
-    const txtStatus = row.querySelector(".txt_status")?.textContent?.trim();
-    const txtSub = row.querySelector(".txt_sub")?.textContent?.trim();
+    console.log("dataset", dataset);
 
-    if (!dataset.company_nm || !dataset.rec_idx || !dataset.recruitapply_idx) {
+    if (
+      !dataset["data-company_nm"] ||
+      !dataset["data-rec_idx"] ||
+      !dataset["data-recruitapply_idx"]
+    ) {
       console.warn("Required data is missing:", dataset);
       return;
     }
+    console.log(
+      "appliedDate",
+      $(element).find(".col_date").text().trim() || new Date().toISOString(),
+    );
 
     const application: CommonApplication = {
-      companyName: dataset.company_nm || "회사 정보 없음",
-      position: dataset.rec_division || "직무 정보 없음",
-      positionTitle: dataset.recruittitle || "직무 정보 없음",
+      companyName: dataset["data-company_nm"] || "회사 정보 없음",
+      position: dataset["data-rec_division"] || "직무 정보 없음",
+      positionTitle: dataset["data-recruittitle"] || "직무 정보 없음",
       appliedDate:
-        row.querySelector(".col_date")?.textContent?.trim() ||
-        new Date().toISOString(),
-
+        $(element).find(".col_date").text().trim() || new Date().toISOString(),
       status: {
         main: txtStatus || "상태 정보 없음",
         sub: txtSub || "",
       },
-
       company: {
-        name: dataset.company_nm || "",
-        id: dataset.csn || "",
+        name: dataset["data-company_nm"] || "",
+        id: dataset["data-csn"] || "",
       },
-
       recruitment: {
-        id: dataset.rec_idx || "",
+        id: dataset["data-rec_idx"] || "",
       },
-
       application: {
-        id: dataset.recruitapply_idx || "",
+        id: dataset["data-recruitapply_idx"] || "",
       },
-
       meta: {
         platform: "saramin",
         lastUpdated: new Date().toISOString(),
-        url: `https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=${dataset.rec_idx}`,
+        url: `https://www.saramin.co.kr/zf_user/jobs/relay/view?rec_idx=${dataset["data-rec_idx"]}`,
       },
     };
+    console.log("단일 아이템", application);
 
     applications.push(application);
   });
 
+  console.log("parseSaraminHtml 호출결과", applications);
   return applications;
 };
 
