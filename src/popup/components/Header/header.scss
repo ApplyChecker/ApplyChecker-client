@@ -1,0 +1,66 @@
+@import "../../styles/variables";
+
+.header {
+  padding-bottom: map-get($spacing, "sm");
+  border-bottom: 1px solid map-get($colors, "border");
+  margin-bottom: map-get($spacing, "md");
+
+  &__title {
+    font-size: map-get($font-sizes, "lg");
+    font-weight: 600;
+    color: map-get($colors, "text-primary");
+    margin-bottom: map-get($spacing, "xs");
+  }
+
+  &__stats {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  &__total {
+    display: flex;
+    align-items: baseline;
+    gap: map-get($spacing, "xs");
+  }
+
+  &__count {
+    font-size: map-get($font-sizes, "xl");
+    font-weight: 600;
+    color: map-get($colors, "primary");
+  }
+
+  &__label {
+    font-size: map-get($font-sizes, "sm");
+    color: map-get($colors, "text-secondary");
+  }
+
+  &__details {
+    margin-top: map-get($spacing, "xs");
+  }
+
+  &__platform {
+    font-size: map-get($font-sizes, "sm");
+    color: map-get($colors, "text-secondary");
+  }
+
+  &__badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: map-get($font-sizes, "xs");
+
+    &--wanted {
+      background: #f3f4f6;
+      color: #3b82f6;
+    }
+
+    &--saramin {
+      background: #f3f4f6;
+      color: #10b981;
+    }
+
+    & + & {
+      margin-left: map-get($spacing, "xs");
+    }
+  }
+}
