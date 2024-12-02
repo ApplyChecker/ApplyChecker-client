@@ -1,22 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import "./styles/popup.scss";
 import JobList from "./components/JobList/JobList";
 
 const App: React.FC = () => {
-  const testBackground = async () => {
-    try {
-      const response = await chrome.runtime.sendMessage({ action: "ping" });
-      console.log("Background response:", response); // { message: 'pong' }이 출력되어야 함
-    } catch (error) {
-      console.error("Background test failed:", error);
-    }
-  };
-
-  useEffect(() => {
-    void testBackground();
-  }, []);
-
   return <JobList />;
 };
 

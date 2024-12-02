@@ -3,13 +3,13 @@ const CopyPlugin = require("copy-webpack-plugin");
 const HtmlPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
+const entryPoints = {
+  popup: path.resolve(__dirname, "src", "popup/popup.tsx"),
+  background: path.resolve(__dirname, "src", "background/background.ts"),
+};
+
 module.exports = {
-  entry: {
-    popup: path.resolve("src/popup/popup.tsx"),
-    // options: path.resolve("src/options/options.tsx"),
-    background: path.resolve("src/background/background.ts"),
-    // contentScript: path.resolve("src/contentScript/contentScript.ts"),
-  },
+  entry: entryPoints,
   module: {
     rules: [
       {
@@ -52,16 +52,11 @@ module.exports = {
     ...getHtmlPlugins(["popup"]),
   ],
   resolve: {
-    extensions: [".tsx", ".ts", ".js"],
+    extensions: [".jsx", ".tsx", ".ts", ".js"],
   },
   output: {
     filename: "[name].js",
     path: path.resolve(__dirname, "dist"),
-  },
-  optimization: {
-    splitChunks: {
-      chunks: "all",
-    },
   },
 };
 
