@@ -1,29 +1,51 @@
 // hooks/useWantedApi.ts
 import { useState, useEffect } from "react";
+import type { APIError } from "../types/application";
 import type {
   ApplicationsState,
   ChromeMessage,
+  CommonApplication,
   MessageResponse,
 } from "../types";
+
+interface ProgressMessage {
+  type: "progress";
+  current: number;
+  total: number;
+}
+
+interface PartialDataMessage {
+  type: "partialData";
+  data: CommonApplication[];
+}
+
+type WantedMessage = ProgressMessage | PartialDataMessage;
 
 interface UseWantedApiReturn {
   applications: ApplicationsState;
   isLoading: boolean;
+  error: APIError | null;
+  progress: number;
   setApplications: React.Dispatch<React.SetStateAction<ApplicationsState>>;
   fetchApplications: () => Promise<void>;
 }
 
-export default function useWantedApi(): UseWantedApiReturn {
+function useWantedApi(): UseWantedApiReturn {
   const [applications, setApplications] = useState<ApplicationsState>({
     applications: [],
+    lastUpdated: "",
   });
+  const [error, setError] = useState<APIError | null>(null);
+  const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  // 초기 로드시 스토리지에서 동기화 상태를 조회
   useEffect(() => {
     const loadStoredData = async () => {
       const result = await chrome.storage.local.get([
         "wantedData",
         "wantedLastUpdated",
+        "wantedSyncState",
       ]);
 
       if (result.wantedData) {
@@ -31,6 +53,24 @@ export default function useWantedApi(): UseWantedApiReturn {
           applications: result.wantedData,
           lastUpdated: result.wantedLastUpdated,
         });
+
+        if (result.wantedSyncState?.inProgress) {
+          setIsLoading(true);
+          setProgress(result.wantedSyncState.progress);
+        } else if (result.wantedSyncState?.error) {
+          if (result.wantedSyncState.error.includes("로그인이 필요합니다")) {
+            setError({
+              type: "login",
+              message: result.wantedSyncState.error,
+              url: "https://www.wanted.co.kr/login",
+            });
+          } else {
+            setError({
+              type: "error",
+              message: result.wantedSyncState.error,
+            });
+          }
+        }
       }
     };
 
@@ -39,6 +79,27 @@ export default function useWantedApi(): UseWantedApiReturn {
 
   const fetchApplications = async () => {
     setIsLoading(true);
+    setError(null);
+    setProgress(0);
+
+    const messageListener = (
+      message: WantedMessage,
+      sender: chrome.runtime.MessageSender,
+      sendResponse: (response?: any) => void,
+    ) => {
+      if (message.type === "progress") {
+        const percentage = Math.floor((message.current / message.total) * 100);
+        setProgress(percentage);
+      } else if (message.type === "partialData") {
+        setApplications({
+          applications: message.data,
+          lastUpdated: new Date().toISOString(),
+        });
+      }
+    };
+
+    chrome.runtime.onMessage.addListener(messageListener);
+
     try {
       const response = await chrome.runtime.sendMessage<
         ChromeMessage,
@@ -47,18 +108,20 @@ export default function useWantedApi(): UseWantedApiReturn {
         action: "fetchWantedData",
       });
 
-      if (response.success && response.data) {
-        setApplications({
-          applications: response.data,
-          lastUpdated: new Date().toISOString(),
-        });
-      } else {
-        throw new Error(response.error || "데이터를 가져오는데 실패했습니다.");
+      if (!response.success) {
+        throw new Error(response.error || "알 수 없는 에러가 발생했습니다.");
       }
+
+      const lastUpdateTime: string = new Date().toISOString();
+
+      setApplications({
+        applications: response.data || [],
+        lastUpdated: lastUpdateTime,
+      });
     } catch (error) {
-      console.error("Failed to fetch applications:", error);
-      throw error;
+      console.error("원티드 API 호출 에러: ", error);
     } finally {
+      chrome.runtime.onMessage.removeListener(messageListener);
       setIsLoading(false);
     }
   };
@@ -66,7 +129,11 @@ export default function useWantedApi(): UseWantedApiReturn {
   return {
     applications,
     isLoading,
+    error,
+    progress,
     setApplications,
     fetchApplications,
   };
 }
+
+export default useWantedApi;
