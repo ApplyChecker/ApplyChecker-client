@@ -26,3 +26,9 @@ export interface ApiResponse {
     active: number;
   };
 }
+
+export interface APIError {
+  type: "login" | "error";
+  message: string;
+  url?: string;
+}
