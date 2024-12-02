@@ -1,0 +1,91 @@
+@import "../../styles/variables";
+
+.applications {
+  width: 100%;
+  max-height: 420px;
+  display: flex;
+  flex-direction: column;
+
+  &__trigger {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    background: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #f8f9fa;
+    }
+  }
+
+  &__icon {
+    transition: transform 0.2s ease;
+
+    &.rotate-90 {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__container {
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    flex: 1;
+  }
+
+  &__list {
+    padding: 6px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  &__show-more {
+    width: 100%;
+    padding: 8px;
+    background: none;
+    border: none;
+    border-top: 1px solid #eee;
+    color: #228be6;
+    font-size: 12px;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #f8f9fa;
+    }
+  }
+}
+
+.status {
+  &--pass {
+    color: #37b24d;
+  }
+
+  &--fail {
+    color: #fa5252;
+  }
+
+  &--pending {
+    color: #868e96;
+  }
+}
+
+.platform {
+  &--wanted {
+    color: #228be6;
+  }
+
+  &--saramin {
+    color: #12b886;
+  }
+}
