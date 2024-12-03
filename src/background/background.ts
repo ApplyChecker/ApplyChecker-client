@@ -3,6 +3,7 @@ import type { CommonApplication } from "../popup/types/index";
 
 import parseSaraminHtml from "./utils/parseSaraminHtml";
 import transformApplication from "./utils/transformApplication";
+import checkUpdateCooldown from "./utils/checkUpdateCooldown";
 
 import wantedApi from "./apis/wantedApi";
 import saraminApi from "./apis/saraminApi";
@@ -40,24 +41,60 @@ chrome.runtime.onMessage.addListener(
     sendResponse: (response: MessageResponse) => void,
   ): boolean => {
     if (request.action === "fetchWantedData") {
-      fetchWantedData()
-        .then((data) => {
-          sendResponse({ success: true, data });
-        })
-        .catch((error: Error) => {
-          sendResponse({ success: false, error: error.message });
-        });
+      (async () => {
+        try {
+          const cooldown = await checkUpdateCooldown("wanted");
+
+          console.log("cooldown", cooldown);
+          if (!cooldown.canUpdate) {
+            sendResponse({ success: false, error: cooldown.message });
+            return;
+          }
+
+          fetchWantedData()
+            .then((data) => {
+              sendResponse({ success: true, data });
+            })
+            .catch((error: Error) => {
+              sendResponse({ success: false, error: error.message });
+            });
+        } catch (error) {
+          sendResponse({
+            success: false,
+            error: "예기치 않은 오류가 발생했습니다.",
+          });
+        }
+      })();
+
       return true;
     }
 
     if (request.action === "fetchSaraminData") {
-      fetchSaraminData()
-        .then((data) => {
-          sendResponse({ success: true, data });
-        })
-        .catch((error: Error) => {
-          sendResponse({ success: false, error: error.message });
-        });
+      (async () => {
+        try {
+          const cooldown = await checkUpdateCooldown("saramin");
+
+          console.log("cooldown", cooldown);
+          if (!cooldown.canUpdate) {
+            sendResponse({ success: false, error: cooldown.message });
+            return;
+          }
+
+          fetchSaraminData()
+            .then((data) => {
+              sendResponse({ success: true, data });
+            })
+            .catch((error: Error) => {
+              sendResponse({ success: false, error: error.message });
+            });
+        } catch (error) {
+          sendResponse({
+            success: false,
+            error: "예기치 않은 오류가 발생했습니다.",
+          });
+        }
+      })();
+
       return true;
     }
 
@@ -134,6 +171,8 @@ async function fetchWantedData(): Promise<CommonApplication[]> {
 
     if (currentApplications.length >= totalApplications) {
       hasMore = false;
+
+      throw new Error("이미 최신 데이터입니다.");
     }
 
     while (hasMore) {
@@ -183,17 +222,16 @@ async function fetchWantedData(): Promise<CommonApplication[]> {
 
     return finalTransformed;
   } catch (error) {
-    console.error("Wanted error:", error);
-
     const errorMessage = (error as Error).message;
+
     const isLoginError = errorMessage.includes("로그인 후 이용 가능합니다");
 
     await updateSyncState({
       inProgress: false,
-      error: isLoginError ? "로그인이 필요합니다" : errorMessage,
+      error: isLoginError ? "로그인이 필요합니다." : errorMessage,
     });
 
-    throw new Error(`원티드 API 호출 실패: ${(error as Error).message}`);
+    throw new Error(`원티드 에러: ${(error as Error).message}`);
   }
 }
 
