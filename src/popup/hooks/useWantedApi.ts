@@ -42,35 +42,22 @@ function useWantedApi(): UseWantedApiReturn {
   // 초기 로드시 스토리지에서 동기화 상태를 조회
   useEffect(() => {
     const loadStoredData = async () => {
-      const result = await chrome.storage.local.get([
+      const stored = await chrome.storage.local.get([
         "wantedData",
         "wantedLastUpdated",
         "wantedSyncState",
       ]);
 
-      if (result.wantedData) {
-        setApplications({
-          applications: result.wantedData,
-          lastUpdated: result.wantedLastUpdated,
-        });
+      if (!stored.wantedData) return;
 
-        if (result.wantedSyncState?.inProgress) {
-          setIsLoading(true);
-          setProgress(result.wantedSyncState.progress);
-        } else if (result.wantedSyncState?.error) {
-          if (result.wantedSyncState.error.includes("로그인이 필요합니다")) {
-            setError({
-              type: "login",
-              message: result.wantedSyncState.error,
-              url: "https://www.wanted.co.kr/login",
-            });
-          } else {
-            setError({
-              type: "error",
-              message: result.wantedSyncState.error,
-            });
-          }
-        }
+      setApplications({
+        applications: stored.wantedData,
+        lastUpdated: stored.wantedLastUpdated,
+      });
+
+      if (stored.wantedSyncState?.inProgress) {
+        setIsLoading(true);
+        setProgress(stored.wantedSyncState.progress);
       }
     };
 
@@ -109,6 +96,19 @@ function useWantedApi(): UseWantedApiReturn {
       });
 
       if (!response.success) {
+        if (response.error?.includes("로그인이 필요합니다.")) {
+          setError({
+            type: "login",
+            message: response.error,
+            url: "https://www.wanted.co.kr/login",
+          });
+        } else {
+          setError({
+            type: "error",
+            message: response.error || "알 수 없는 에러가 발생했습니다.",
+          });
+        }
+
         throw new Error(response.error || "알 수 없는 에러가 발생했습니다.");
       }
 
@@ -119,7 +119,7 @@ function useWantedApi(): UseWantedApiReturn {
         lastUpdated: lastUpdateTime,
       });
     } catch (error) {
-      console.error("원티드 API 호출 에러: ", error);
+      console.error("useWantedApi error:", error);
     } finally {
       chrome.runtime.onMessage.removeListener(messageListener);
       setIsLoading(false);

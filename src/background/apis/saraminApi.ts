@@ -37,7 +37,7 @@ async function saraminApi(): Promise<string> {
   const html: string = await response.text();
 
   if (html.includes("로그인이 필요한 페이지 입니다.")) {
-    throw new Error("로그인이 필요한 기능입니다.");
+    throw new Error("사람인 에러: 로그인이 필요합니다.");
   }
 
   return html;

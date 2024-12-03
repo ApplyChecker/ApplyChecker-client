@@ -13,8 +13,7 @@ const wantedApi = async (currentOffset: number) => {
   const userId = await getCachedUserId();
   const limit: number = 20;
 
-  const url: string = `https://www.wanted.co.kr/api/v1/application
-  s?${Date.now()}&status=complete,+pass,+hire,+reject&sort=-apply_time,-create_time&user_id=${userId}&end_date=&locale=ko-kr&includes=summary&q=&limit=${limit}&offset=${currentOffset}&start_date=`;
+  const url: string = `https://www.wanted.co.kr/api/v1/applications?${Date.now()}&status=complete,+pass,+hire,+reject&sort=-apply_time,-create_time&user_id=${userId}&end_date=&locale=ko-kr&includes=summary&q=&limit=${limit}&offset=${currentOffset}&start_date=`;
 
   const response: Response = await fetch(url, {
     headers: {
@@ -43,7 +42,7 @@ const wantedApi = async (currentOffset: number) => {
     const responseData: WantedErrorResponse = await response.json();
 
     if (responseData.message.error_code === 1002) {
-      throw new Error(`로그인 후 이용 가능합니다.`);
+      throw new Error(`로그인이 필요합니다.`);
     }
 
     throw new Error(responseData.message.message);
