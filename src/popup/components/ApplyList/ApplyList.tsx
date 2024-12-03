@@ -1,13 +1,14 @@
-// components/ApplicationList/ApplicationList.tsx
-import { useState } from "react";
+import React, { useState } from "react";
+
 import type { CommonApplication } from "../../types";
-import "./applicationList.scss";
+
+import "./applyList.scss";
 
 interface ApplicationListProps {
   applications: CommonApplication[];
 }
 
-const ApplicationList = ({ applications }: ApplicationListProps) => {
+const ApplyList = ({ applications }: ApplicationListProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAll, setShowAll] = useState(false);
   const displayedApps = isExpanded ? applications : applications.slice(0, 10);
@@ -152,4 +153,4 @@ const ApplicationList = ({ applications }: ApplicationListProps) => {
   );
 };
 
-export default ApplicationList;
+export default ApplyList;

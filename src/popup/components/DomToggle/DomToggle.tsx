@@ -1,13 +1,14 @@
 import { Eye, EyeOff } from "lucide-react";
 import Switch from "../Switch/Switch";
-import "./Settings.scss";
+
+import "./domToggle.scss";
 
 interface SettingsProps {
   isDimEnabled: boolean;
   onToggle: (enabled: boolean) => void;
 }
 
-const Settings = ({ isDimEnabled, onToggle }: SettingsProps) => (
+const DomToggle = ({ isDimEnabled, onToggle }: SettingsProps) => (
   <div className="settings">
     <div className="settings__label">
       {isDimEnabled ? (
@@ -21,4 +22,4 @@ const Settings = ({ isDimEnabled, onToggle }: SettingsProps) => (
   </div>
 );
 
-export default Settings;
+export default DomToggle;

@@ -1,9 +1,12 @@
-import { RefreshCw, Loader } from "lucide-react";
-import type { APIError } from "../../types/application";
-import Progress from "../Progress/Progress";
-import "./SyncButtons.scss";
-import LoginError from "../LoginError/LoginError";
 import { useState } from "react";
+import { RefreshCw, Loader } from "lucide-react";
+
+import type { APIError } from "../../types/application";
+
+import Progress from "../Progress/Progress";
+import LoginError from "../LoginError/LoginError";
+
+import "./SyncButtons.scss";
 
 interface SyncState {
   isLoading: boolean;

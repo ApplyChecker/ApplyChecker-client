@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+
+import PopupLayout from "./components/PopupLayout/PopupLayout";
+
 import "./styles/popup.scss";
-import JobList from "./components/JobList/JobList";
 
 const App: React.FC = () => {
-  return <JobList />;
+  return <PopupLayout />;
 };
 
 const container = document.createElement("div");

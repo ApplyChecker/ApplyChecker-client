@@ -1,5 +1,5 @@
 import React from "react";
-import "./header.scss";
+import "./applySummary.scss";
 
 interface HeaderProps {
   totalCount: number;
@@ -9,7 +9,7 @@ interface HeaderProps {
   };
 }
 
-const Header = ({ totalCount, counts }: HeaderProps) => (
+const ApplySummary = ({ totalCount, counts }: HeaderProps) => (
   <div className="header">
     <div className="header__main">
       <h1 className="header__title">구직활동 현황</h1>
@@ -28,4 +28,4 @@ const Header = ({ totalCount, counts }: HeaderProps) => (
     </div>
   </div>
 );
-export default Header;
+export default ApplySummary;

@@ -1,15 +1,16 @@
 import { useState } from "react";
-import "./jobList.scss";
 
-import Header from "../Header/Header";
-import Settings from "../Settings/Settings";
+import ApplySummary from "../ApplySummary/ApplySummary";
+import DomToggle from "../DomToggle/DomToggle";
 import SyncButtons from "../SyncButtons/SyncButtons";
-import ApplicationList from "../ApplicationList/ApplicationList";
+import ApplyList from "../ApplyList/ApplyList";
 
 import useWantedApi from "../../hooks/useWantedApi";
 import useSaraminApi from "../../hooks/useSaramInApi";
 
-const JobList = () => {
+import "./popupLayout.scss";
+
+const PopupLayout = () => {
   const [isDimEnabled, setIsDimEnabled] = useState(true);
 
   const {
@@ -40,7 +41,7 @@ const JobList = () => {
 
   return (
     <div className="job-list">
-      <Header
+      <ApplySummary
         totalCount={
           wantedApps.applications.length + saraminApps.applications.length
         }
@@ -50,7 +51,7 @@ const JobList = () => {
         }}
       />
 
-      <Settings isDimEnabled={isDimEnabled} onToggle={setIsDimEnabled} />
+      <DomToggle isDimEnabled={isDimEnabled} onToggle={setIsDimEnabled} />
 
       <SyncButtons
         platforms={{
@@ -70,7 +71,7 @@ const JobList = () => {
         onSync={handleSync}
       />
 
-      <ApplicationList
+      <ApplyList
         applications={[
           ...wantedApps.applications,
           ...saraminApps.applications,
@@ -84,4 +85,4 @@ const JobList = () => {
   );
 };
 
-export default JobList;
+export default PopupLayout;
