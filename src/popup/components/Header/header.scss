@@ -1,66 +1,64 @@
 @import "../../styles/variables";
 
 .header {
-  padding-bottom: map-get($spacing, "sm");
-  border-bottom: 1px solid map-get($colors, "border");
-  margin-bottom: map-get($spacing, "md");
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px #e4e5e9 solid;
+  margin-bottom: 10px;
 
-  &__title {
-    font-size: map-get($font-sizes, "lg");
-    font-weight: 600;
-    color: map-get($colors, "text-primary");
-    margin-bottom: map-get($spacing, "xs");
-  }
-
-  &__stats {
+  &__main {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111111;
+    margin: 0;
   }
 
   &__total {
     display: flex;
-    align-items: baseline;
-    gap: map-get($spacing, "xs");
+    align-items: center;
+    gap: 4px;
   }
 
   &__count {
-    font-size: map-get($font-sizes, "xl");
+    font-size: 24px;
     font-weight: 600;
-    color: map-get($colors, "primary");
+    color: #4263eb;
   }
 
   &__label {
-    font-size: map-get($font-sizes, "sm");
-    color: map-get($colors, "text-secondary");
+    font-size: 14px;
+    color: #666666;
   }
 
-  &__details {
-    margin-top: map-get($spacing, "xs");
-  }
-
-  &__platform {
-    font-size: map-get($font-sizes, "sm");
-    color: map-get($colors, "text-secondary");
+  &__platforms {
+    display: flex;
+    gap: 8px;
   }
 
   &__badge {
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: map-get($font-sizes, "xs");
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
 
     &--wanted {
-      background: #f3f4f6;
-      color: #3b82f6;
+      background-color: #eef1ff;
+      color: #4263eb;
     }
 
     &--saramin {
-      background: #f3f4f6;
-      color: #10b981;
-    }
-
-    & + & {
-      margin-left: map-get($spacing, "xs");
+      background-color: #e6fcf5;
+      color: #12b886;
     }
   }
 }

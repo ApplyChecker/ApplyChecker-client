@@ -1,11 +1,18 @@
 import type { CommonApplication } from ".";
 
-// types/messages.ts
 export interface WantedSyncState {
   inProgress: boolean;
   progress: number;
   existingCount: number;
   error?: string;
+}
+
+export interface WantedApiState {
+  applications: CommonApplication[];
+  isLoading: boolean;
+  error: string | null;
+  progress: number;
+  lastUpdated: string | null;
 }
 
 export interface ProgressMessage {

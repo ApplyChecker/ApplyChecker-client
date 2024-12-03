@@ -58,11 +58,13 @@ const JobList = () => {
             isLoading: wantedLoading,
             error: wantedError,
             progress: wantedProgress,
+            lastSyncDate: wantedApps.lastUpdated,
           },
           saramin: {
             isLoading: saraminLoading,
             error: saraminError,
             progress: saraminProgress,
+            lastSyncDate: saraminApps.lastUpdated,
           },
         }}
         onSync={handleSync}
