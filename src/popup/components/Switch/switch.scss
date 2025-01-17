@@ -1,0 +1,37 @@
+// components/Switch/Switch.scss
+@import "../../styles/variables.scss";
+
+.switch {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: #e5e7eb;
+  border-radius: 12px;
+  padding: 2px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &--checked {
+    background: #3b82f6;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__thumb {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+
+    .switch--checked & {
+      transform: translateX(20px);
+    }
+  }
+}

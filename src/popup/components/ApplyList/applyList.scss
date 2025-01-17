@@ -1,0 +1,202 @@
+@import "../../styles/variables";
+
+.application-list {
+  width: 100%;
+
+  &__header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+  }
+
+  &__title {
+    font-size: 12px;
+    color: #333;
+  }
+
+  &__arrow {
+    transition: transform 0.2s;
+
+    &.is-expanded {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__content {
+    margin-top: 8px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eaeaea;
+  }
+
+  &__table {
+    width: 100%;
+  }
+
+  &__items {
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  &__show-more {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-top: 1px solid #eaeaea;
+    background: none;
+    color: #228be6;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+  }
+
+  &__table-header {
+    display: grid;
+    grid-template-columns: minmax(80px, 1fr) minmax(60px, 1fr) 40px 40px 50px;
+    padding: 8px 12px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eaeaea;
+    gap: 5px;
+
+    .header__item {
+      font-size: 11px;
+      color: #666;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+  }
+}
+
+.application-item {
+  display: grid;
+  grid-template-columns: minmax(80px, 1fr) minmax(60px, 1fr) 40px 40px 50px;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 6px;
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  min-height: 40px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  &__info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__company {
+    font-size: 11px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 80px; // 한글 기준 8글자 정도
+  }
+
+  &__position {
+    font-size: 11px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__date {
+    font-size: 11px;
+    color: #888;
+    white-space: nowrap;
+    text-align: center;
+    min-width: 45px; // MM.DD 형식 기준
+  }
+
+  &__sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #666;
+  }
+
+  &__dot {
+    color: #ccc;
+  }
+
+  &__platform {
+    font-size: 11px;
+    white-space: nowrap;
+    text-align: center;
+  }
+
+  &__status {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    text-align: center;
+    white-space: nowrap;
+    width: fit-content;
+    margin: 0 auto;
+  }
+}
+
+.status {
+  &--pending {
+    background-color: #f8f9fa;
+    color: #495057;
+  }
+
+  &--pass {
+    background-color: #e7f5ff;
+    color: #228be6;
+  }
+
+  &--fail {
+    background-color: #fff5f5;
+    color: #fa5252;
+  }
+
+  &--success {
+    background-color: #ebfbee;
+    color: #40c057;
+  }
+
+  &--default {
+    background-color: #f8f9fa;
+    color: #495057;
+  }
+}
+
+.platform {
+  &--wanted {
+    color: #228be6;
+  }
+
+  &--programmers {
+    color: #40c057;
+  }
+}

@@ -1,0 +1,64 @@
+@import "../../styles/variables";
+
+.header {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px #e4e5e9 solid;
+  margin-bottom: 10px;
+
+  &__main {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111111;
+    margin: 0;
+  }
+
+  &__total {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  &__count {
+    font-size: 24px;
+    font-weight: 600;
+    color: #4263eb;
+  }
+
+  &__label {
+    font-size: 14px;
+    color: #666666;
+  }
+
+  &__platforms {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+
+    &--wanted {
+      background-color: #eef1ff;
+      color: #4263eb;
+    }
+
+    &--saramin {
+      background-color: #e6fcf5;
+      color: #12b886;
+    }
+  }
+}
